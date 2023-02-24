@@ -58,8 +58,13 @@ public class CriteriaService {
      * @return hql query
      */
 
-    public <T extends Criteria> StringBuffer createHQLQueryWithFilter( Class clazz, List<String> selectFields, Class returnType, T criteria ) {
+    public <T extends Criteria> StringBuffer createHQLQuery( Class clazz, List<String> selectFields, Class returnType, T criteria ) {
         StringBuffer query = this.createHQLQuery(clazz, selectFields, returnType);//filtersiz queryni yasab oldik
+        query = this.createHQLWithCriteriaFromQuery(clazz, criteria, query);
+        return query;
+    }
+
+    private <T extends Criteria> StringBuffer createHQLWithCriteriaFromQuery( Class clazz, T criteria, StringBuffer query ) {
         String as = clazz.getSimpleName().substring(0, 3);
         if ( criteria.getFilters().size() > 0 ) {//Agar rostan filter bor bulsa where orqali query ga quwib ciqamz
             query.append(" where ");
@@ -79,8 +84,35 @@ public class CriteriaService {
             int length = query.length();
             query.delete(length - 4, length);//oxirgi endni girs copamz
         }
+    }
+
+    public StringBuffer createHQLQuery( Class clazz, List<String> selectFields, Class returnType, List<Join> joins ) {
+        StringBuffer query = this.createHQLQuery(clazz, selectFields, returnType);
+        for ( Join join : joins ) {
+            switch ( join.getJoinType() ) {
+                case INNER -> query.append(" inner join ");
+                case RIGHT -> query.append(" right join ");
+                case LEFT -> query.append(" left join ");
+            }
+            String as = join.getClazz().getSimpleName().substring(0, 3);
+            query.append(join.getClazz())
+                    .append(" as ")
+                    .append(as)
+                    .append(" on ")
+                    .append(as)
+                    .append(".")
+                    .append(join.getClazzField())
+                    .append("=")
+                    .append(clazz.getSimpleName(), 0, 3)
+                    .append(".")
+                    .append(join.getJoinField());
+        }
         return query;
     }
 
-
+    public <T extends Criteria> StringBuffer createHQLQuery( Class clazz, List<String> selectFields, Class returnType, List<Join> joins, T criteria ) {
+        StringBuffer query = this.createHQLQuery(clazz, selectFields, returnType, joins);
+        query = createHQLWithCriteriaFromQuery(clazz, criteria, query);
+        return query;
+    }
 }

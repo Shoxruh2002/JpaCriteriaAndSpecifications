@@ -62,7 +62,7 @@ public class BaseController {
                                                   @RequestParam("authorAge") Optional<Integer> authorAge ) {
         long l = System.currentTimeMillis();
         AuthorCriteria authorCriteria = new AuthorCriteria(authorName, authorAge);//criteria yasab olamz
-        String query = criteriaService.createHQLQueryWithFilter(Author.class, List.of("id", "name", "age"), AuthorDTO.class, authorCriteria).toString();//tayyor query cani olamz
+        String query = criteriaService.createHQLQuery(Author.class, List.of("id", "name", "age"), AuthorDTO.class, authorCriteria).toString();//tayyor query cani olamz
         List<AuthorDTO> resultList = entityManager.createQuery(query, AuthorDTO.class).getResultList();//tayyor natijani olamz
         System.out.println(System.currentTimeMillis() - l);
         return resultList;
@@ -77,9 +77,26 @@ public class BaseController {
         return resultList;
     }
 
-    @GetMapping("/book/get-all")
-    public List<BookDTO> getAllBooks() {
+    @GetMapping("/book-dto/get-all-by-find-all")
+    public List<BookDTO> getAllBooksByFindAll(
+            @RequestParam("title") Optional<String> title,
+            @RequestParam("description") Optional<String> description,
+            @RequestParam("price") Optional<Double> price,
+            @RequestParam("authorName") Optional<String> authorName,
+            @RequestParam("authorAge") Optional<Integer> authorAge,
+            ) {
         return bookRepo.findAllBookDTO();
+    }
+
+    @GetMapping("/book-dto/get-all-by-query")
+    public List<BookDTO> getAllBooksByQuery(
+            @RequestParam("title") Optional<String> title,
+            @RequestParam("description") Optional<String> description,
+            @RequestParam("price") Optional<Double> price,
+            @RequestParam("authorName") Optional<String> authorName,
+            @RequestParam("authorAge") Optional<Integer> authorAge,
+            ) {
+
     }
 
 
