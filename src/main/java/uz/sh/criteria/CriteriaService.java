@@ -84,6 +84,7 @@ public class CriteriaService {
             int length = query.length();
             query.delete(length - 4, length);//oxirgi endni girs copamz
         }
+        return query;
     }
 
     public StringBuffer createHQLQuery( Class clazz, List<String> selectFields, Class returnType, List<Join> joins ) {

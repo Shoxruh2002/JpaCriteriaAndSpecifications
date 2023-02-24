@@ -83,21 +83,21 @@ public class BaseController {
             @RequestParam("description") Optional<String> description,
             @RequestParam("price") Optional<Double> price,
             @RequestParam("authorName") Optional<String> authorName,
-            @RequestParam("authorAge") Optional<Integer> authorAge,
+            @RequestParam("authorAge") Optional<Integer> authorAge
             ) {
         return bookRepo.findAllBookDTO();
     }
 
-    @GetMapping("/book-dto/get-all-by-query")
-    public List<BookDTO> getAllBooksByQuery(
-            @RequestParam("title") Optional<String> title,
-            @RequestParam("description") Optional<String> description,
-            @RequestParam("price") Optional<Double> price,
-            @RequestParam("authorName") Optional<String> authorName,
-            @RequestParam("authorAge") Optional<Integer> authorAge,
-            ) {
-
-    }
+//    @GetMapping("/book-dto/get-all-by-query")
+//    public List<BookDTO> getAllBooksByQuery(
+//            @RequestParam("title") Optional<String> title,
+//            @RequestParam("description") Optional<String> description,
+//            @RequestParam("price") Optional<Double> price,
+//            @RequestParam("authorName") Optional<String> authorName,
+//            @RequestParam("authorAge") Optional<Integer> authorAge,
+//            ) {
+//
+//    }
 
 
 //
