@@ -15,11 +15,14 @@ import lombok.Setter;
 @Setter
 public class Filter {
 
+
     private FilterMode FilterMode;
 
     private String field;
 
     private Object value;
+
+//    private String aliases;
 
     public enum FilterMode {
         EQUALS_AS_STRING,

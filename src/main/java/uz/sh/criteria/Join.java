@@ -16,11 +16,13 @@ import lombok.Setter;
 @Setter
 public class Join {
 
-    private Class clazz;
+    private Class clazz; //qaysi klass bn join buliwi
 
-    private String clazzField;
+    private String clazzField;// join bulayotgan klass ning qaysi fieldi orqali join buliwi
 
-    private String joinField;
+    private Class joinClazz; //join qildiruvci klass
+
+    private String joinField;//join qildiruvci klass ni qaysi feildi bn join buliwi
 
     private JoinType joinType;
 

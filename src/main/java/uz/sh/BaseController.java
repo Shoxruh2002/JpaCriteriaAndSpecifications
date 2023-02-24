@@ -1,11 +1,15 @@
 package uz.sh;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import uz.sh.criteria.AuthorCriteria;
+import uz.sh.criteria.BookCriteria;
 import uz.sh.criteria.CriteriaService;
+import uz.sh.criteria.Join;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,8 +65,8 @@ public class BaseController {
     public List<AuthorDTO> getAllAuthorsByFilter( @RequestParam("authorName") Optional<String> authorName,
                                                   @RequestParam("authorAge") Optional<Integer> authorAge ) {
         long l = System.currentTimeMillis();
-        AuthorCriteria authorCriteria = new AuthorCriteria(authorName, authorAge);//criteria yasab olamz
-        String query = criteriaService.createHQLQuery(Author.class, List.of("id", "name", "age"), AuthorDTO.class, authorCriteria).toString();//tayyor query cani olamz
+        AuthorCriteria authorCriteria = new AuthorCriteria(List.of("id", "name", "age"), authorName, authorAge);//criteria yasab olamz
+        String query = criteriaService.createJoinedHQLQuery(Author.class, authorCriteria, AuthorDTO.class).toString();//tayyor query cani olamz
         List<AuthorDTO> resultList = entityManager.createQuery(query, AuthorDTO.class).getResultList();//tayyor natijani olamz
         System.out.println(System.currentTimeMillis() - l);
         return resultList;
@@ -84,8 +88,21 @@ public class BaseController {
             @RequestParam("price") Optional<Double> price,
             @RequestParam("authorName") Optional<String> authorName,
             @RequestParam("authorAge") Optional<Integer> authorAge
-            ) {
-        return bookRepo.findAllBookDTO();
+    ) {
+        long l = System.currentTimeMillis();
+        ArrayList<String> list = new ArrayList<>();
+        list.add("id");
+        list.add("title");
+        list.add("description");
+        list.add("price");
+        list.add("authorId");
+        AuthorCriteria authorCriteria = new AuthorCriteria(List.of("name", "age"), authorName, authorAge);//criteria yasab olamz
+        BookCriteria bookCriteria = new BookCriteria(list, title, description, price);//criteria yasab olamz
+        Join join = new Join(Author.class, "id", Book.class, "authorId", JoinType.INNER);
+        String query = criteriaService.createJoinedHQLQuery(Book.class, bookCriteria, join, authorCriteria, BookDTO.class).toString();
+        List<BookDTO> resultList = entityManager.createQuery(query, BookDTO.class).getResultList();//tayyor natijani olamz
+        System.out.println(System.currentTimeMillis() - l);
+        return resultList;
     }
 
 //    @GetMapping("/book-dto/get-all-by-query")

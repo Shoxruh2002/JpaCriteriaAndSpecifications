@@ -1,7 +1,7 @@
 package uz.sh.criteria;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author Shoxruh Bekpulatov
@@ -10,5 +10,8 @@ import java.util.List;
 public interface Criteria extends Serializable {
 
 
-    List<Filter> getFilters();
+    Map<Filter, String> getFilters();
+
+    Map<String, String> getSelectedFields();
+
 }

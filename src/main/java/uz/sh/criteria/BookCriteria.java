@@ -1,8 +1,9 @@
 package uz.sh.criteria;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import jakarta.validation.constraints.NotNull;
+import uz.sh.Book;
+
+import java.util.*;
 
 /**
  * @author Shoxruh Bekpulatov
@@ -17,40 +18,41 @@ public class BookCriteria implements Criteria {
 
     private Filter priceFilter;
 
-    private Filter authorNameFilter;
+    private final Map<Filter, String> filters = new HashMap<>();
 
-    private Filter authorAgeFilter;
-
-    private final List<Filter> filters = new ArrayList<>();
+    private final Map<String, String> selectedFields;
 
 
-    public BookCriteria( Optional<String> titleFilter, Optional<String> descriptionFilter, Optional<Double> priceFilter, Optional<String> authorNameFilter, Optional<Integer> authorAgeFilter ) {
+    public BookCriteria( @NotNull ArrayList<String> selectedFields, Optional<String> titleFilter, Optional<String> descriptionFilter, Optional<Double> priceFilter ) {
         titleFilter.ifPresent(s -> {
             this.titleFilter = new Filter(Filter.FilterMode.LIKE_TRIM_PERCENT, "title", s);
-            this.filters.add(this.titleFilter);
+            this.filters.put(this.titleFilter, Book.class.getSimpleName().toLowerCase());
         });
         descriptionFilter.ifPresent(s -> {
             this.descriptionFilter = new Filter(Filter.FilterMode.LIKE_TRIM_PERCENT, "description", s);
-            this.filters.add(this.descriptionFilter);
+            this.filters.put(this.descriptionFilter, Book.class.getSimpleName().toLowerCase());
         });
         priceFilter.ifPresent(s -> {
             this.priceFilter = new Filter(Filter.FilterMode.EQUALS, "price", s);
-            this.filters.add(this.priceFilter);
+            this.filters.put(this.priceFilter, Book.class.getSimpleName().toLowerCase());
         });
-        authorAgeFilter.ifPresent(s -> {
-            this.authorAgeFilter = new Filter(Filter.FilterMode.EQUALS, "age", s);
-            this.filters.add(this.authorAgeFilter);
-        });
-        authorNameFilter.ifPresent(s -> {
-            this.authorNameFilter = new Filter(Filter.FilterMode.LIKE_TRIM_PERCENT, "name", s);
-            this.filters.add(this.authorNameFilter);
-        });
+        HashMap<String, String> map = new LinkedHashMap<>();
+        for ( String f : selectedFields ) {
+            map.put(f, Book.class.getSimpleName().toLowerCase());
+        }
+        this.selectedFields = map;
+
     }
 
 
     @Override
-    public List<Filter> getFilters() {
+    public Map<Filter, String> getFilters() {
         return this.filters;
+    }
+
+    @Override
+    public Map<String, String> getSelectedFields() {
+        return this.selectedFields;
     }
 
     public Filter getTitleFilter() {
@@ -65,11 +67,4 @@ public class BookCriteria implements Criteria {
         return priceFilter;
     }
 
-    public Filter getAuthorNameFilter() {
-        return authorNameFilter;
-    }
-
-    public Filter getAuthorAgeFilter() {
-        return authorAgeFilter;
-    }
 }
